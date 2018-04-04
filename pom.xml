@@ -16,6 +16,9 @@
 	<groupId>uk.ac.gate.plugins</groupId>
 	<artifactId>format-twitter</artifactId>
 	<version>8.5-SNAPSHOT</version>
+	
+	<name>Format_Twitter</name>
+	<description>Document Format plugin to support reading and writing Twitter style JSON files</description>
 
 	<licenses>
 		<license>
