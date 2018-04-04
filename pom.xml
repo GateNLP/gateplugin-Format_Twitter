@@ -17,7 +17,7 @@
 	<artifactId>format-twitter</artifactId>
 	<version>8.5-SNAPSHOT</version>
 	
-	<name>Format_Twitter</name>
+	<name>Format: Twitter</name>
 	<description>Document Format plugin to support reading and writing Twitter style JSON files</description>
 
 	<licenses>
