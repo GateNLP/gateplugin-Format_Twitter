@@ -10,12 +10,14 @@
 ## Parsing
 
 - each Tweet object, regardless of depth, is processed in the following way
-  - if it contains a `full_text` element then this is turned into a `TweetSegment`
-    - entities are pulled from the `entities` sibling element
-  - if it contains a `extended_tweet` this is processed recursively
   - if it contains a `retweeted_status` this is processed recursively
-  - if it contains a `quoted_status` this is processed recursively
-  - if it contains none of the above but has a `text` element then it's an old style tweet so we use it's `text` and `entities` to create the `TweetSegement` annotation
+  - if it's not a retweet
+    - if it contains a `full_text` element then this is turned into a `TweetSegment`
+      - entities are pulled from the `entities` sibling element
+    - if it contains a `extended_tweet` this is processed recursively
+    - if it contains none of the above but has a `text` element then it's an old style tweet so we use it's `text` and `entities` to create the `TweetSegement` annotation
+    - if it contains a `quoted_status` this is processed recursively
+    
 
 
 ## Serialization
