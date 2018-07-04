@@ -18,7 +18,7 @@
     - if it contains none of the above but has a `text` element then it's an old style tweet so we use it's `text` and `entities` to create the `TweetSegement` annotation
     - if it contains a `quoted_status` this is processed recursively
     
-
+- `TweetSegement` annotations should be separated by a blank line for visual clarity and the sentence splitter
 
 ## Serialization
 
