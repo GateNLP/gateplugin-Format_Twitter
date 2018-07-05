@@ -40,6 +40,7 @@ public class TweetUtils  {
   public static final String MIME_TYPE = "text/x-json-twitter";
   public static final String DEFAULT_ENCODING = "UTF-8";
   public static final String TWEET_ANNOTATION_TYPE = "Tweet";
+  public static final String TWEET_SEGMENT_ANNOTATION_TYPE = "TweetSegement";
 
   public static final String DEFAULT_TEXT_ATTRIBUTE = "text";
 

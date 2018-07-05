@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +29,7 @@ import gate.util.Strings;
 
 
 public class Tweet {
-  private String string;
+  private StringBuilder string;
   private long start;
   private Set<PreAnnotation> annotations;
   
@@ -42,7 +43,7 @@ public class Tweet {
   }
 
   public String getString() {
-    return this.string;
+    return this.string.toString();
   }
   
   public long getStart() {
@@ -73,12 +74,19 @@ public class Tweet {
    * the annotation feature map contains all the other JSON data, recursively.
    */
   private Tweet(JsonNode json, boolean handleEntities) {
-    string = "";
+    string = new StringBuilder();
     Iterator<String> keys = json.fieldNames();
     FeatureMap features = Factory.newFeatureMap();
     annotations = new HashSet<PreAnnotation>();
 
     while (keys.hasNext()) {
+      String key = keys.next();
+      features.put(key, TweetUtils.process(json.get(key)));
+    }
+    
+    unpackTweets(features,null,"tweet");
+    
+    /*while (keys.hasNext()) {
       String key = keys.next();
 
       if (key.equals(TweetUtils.DEFAULT_TEXT_ATTRIBUTE)) {
@@ -90,9 +98,76 @@ public class Tweet {
       } else {
         features.put(key, TweetUtils.process(json.get(key)));
       }
-    }
+    }*/
     
     annotations.add(new PreAnnotation(0L, string.length(), TweetUtils.TWEET_ANNOTATION_TYPE, features));
+    
+  }
+  
+  private void unpackTweets(FeatureMap features, String path, String type) {
+    System.out.println(path);
+    String expandedPath = path == null ? "" : path+".";
+    if (features.containsKey("retweeted_status")) {
+      unpackTweets((FeatureMap)features.get("retweeted_status"), expandedPath+"retweeted_status", "retweet");
+      return;
+    }
+    
+    if (features.containsKey("full_text")) {
+      unpackTextAndEntities(features, expandedPath, "full_text", type);      
+    } else if (features.containsKey("extended_tweet")) {
+      unpackTweets((FeatureMap)features.get("extended_tweet"), expandedPath+"extend_tweet", type);
+    } else if (features.containsKey("text")) {
+      unpackTextAndEntities(features, expandedPath, "text", type);
+    }
+    
+    if (features.containsKey("quoted_status")) {
+      unpackTweets((FeatureMap)features.get("quoted_status"), expandedPath+"quoted_status", "quotedTweet");
+    }
+  }
+  
+  private void unpackTextAndEntities(FeatureMap features, String expandedPath, String key, String type) {
+    if (string.length() != 0) {
+      string.append("\n\n");
+    }
+    
+    String content = features.get(key).toString();
+    boolean hasEntities = features.containsKey(TweetUtils.ENTITIES_ATTRIBUTE);
+    
+    RepositioningInfo repos = new RepositioningInfo();      
+    content = unescape(content, repos);
+    
+    long start = string.length();
+    string.append(content);
+    
+    FeatureMap segmentFeatures = Factory.newFeatureMap();
+    segmentFeatures.put("textPath", expandedPath+key);
+    segmentFeatures.put("tweetType", type);
+    if (hasEntities) segmentFeatures.put("entitiesPath", expandedPath+TweetUtils.ENTITIES_ATTRIBUTE);
+    
+    
+    annotations.add(new PreAnnotation(start, string.length(), "TweetSegment", segmentFeatures));
+    
+    if (!hasEntities) return;
+    
+    FeatureMap entities = (FeatureMap)features.get(TweetUtils.ENTITIES_ATTRIBUTE);
+    
+    for (Map.Entry<Object,Object> entity : entities.entrySet()) {
+      String entityType = entity.getKey().toString();
+      
+      List<FeatureMap> instances = (List<FeatureMap>)entity.getValue();
+      
+      for (FeatureMap instance : instances) {
+        List<Number> position = (List<Number>)instance.remove("indices");
+        
+        long annStart = start + repos.getExtractedPos(position.get(0).longValue());
+        long annEnd = start + repos.getExtractedPos(position.get(1).longValue());
+        
+        System.out.println(start+"/"+position+"/"+annStart+"/"+annEnd);       
+        
+        annotations.add(new PreAnnotation(annStart, annEnd, entityType, instance));
+      }
+      
+    }
   }
   
 
@@ -142,7 +217,7 @@ public class Tweet {
     
     // Create the main annotation and the content.
     this.annotations.add(new PreAnnotation(0, content.length(), TweetUtils.TWEET_ANNOTATION_TYPE, annoFeatures));
-    this.string = content.toString();
+    this.string = content;
   }
   
   /**
