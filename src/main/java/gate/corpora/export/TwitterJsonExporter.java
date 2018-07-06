@@ -45,10 +45,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@CreoleResource(name = "GATE JSON Exporter",
-    comment = "Export documents and corpora in JSON format",
+@CreoleResource(name = "Twitter JSON Exporter",
+    comment = "Export documents and corpora in Twitter JSON format",
     tool = true, autoinstances = @AutoInstance, icon = "GATEJSON")
-public class GATEJsonExporter extends CorpusExporter {
+public class TwitterJsonExporter extends CorpusExporter {
   
   private static final long serialVersionUID = -8087536348560365618L;
 
@@ -117,7 +117,7 @@ public class GATEJsonExporter extends CorpusExporter {
   public void setDocumentAnnotationType(String type) {}
   public String getDocumentAnnotationType() { return null; }
 
-  public GATEJsonExporter() {
+  public TwitterJsonExporter() {
     super("GATE JSON", "json","application/json");
   }
 
