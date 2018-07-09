@@ -87,20 +87,6 @@ public class TwitterJsonExporter extends CorpusExporter {
   		"separated by newlines.")
   public void setExportAsArray(Boolean array) {}
   public Boolean getExportAsArray() { return null; }
-  
-  /**
-   * No-op, exists only as a host for the parameter annotations.
-   */
-  @RunTime
-  @Optional
-  @CreoleParameter(defaultValue = GateConstants.ORIGINAL_MARKUPS_ANNOT_SET_NAME,
-          comment = "Annotation set in which the \"document " +
-  		"annotation\" can be found.  These annotations serve to delimit " +
-  		"the parts of the document that should be output, and the result " +
-  		"will contain one JSON object per annotation, with the " +
-  		"annotation's features as additional JSON properties.")
-  public void setDocumentAnnotationASName(String asName) {}
-  public String getDocumentAnnotationASName() { return null; }
 
   public TwitterJsonExporter() {
     super("Twitter JSON", "json","text/x-json-twitter");
@@ -180,7 +166,7 @@ public class TwitterJsonExporter extends CorpusExporter {
       // look for document annotations
       AnnotationSet docAnnots = null;
       if(options.containsKey("documentAnnotationType")) {
-        docAnnots = doc.getAnnotations((String)options.get("documentAnnotationASName"))
+        docAnnots = doc.getAnnotations(GateConstants.ORIGINAL_MARKUPS_ANNOT_SET_NAME)
                 .get("Tweet");
       }
       if(docAnnots == null || docAnnots.isEmpty()) {
