@@ -13,8 +13,8 @@
    style="fill-opacity:1;fill-rule:evenodd;stroke:none"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="GATEXML.svg">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="TwitterJSON.svg">
   <metadata
      id="metadata80">
     <rdf:RDF>
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -36,19 +36,19 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="2048"
-     inkscape:window-height="1128"
+     inkscape:window-width="3070"
+     inkscape:window-height="1752"
      id="namedview78"
      showgrid="false"
      fit-margin-top="4"
      fit-margin-left="4"
      fit-margin-right="4"
      fit-margin-bottom="4"
-     inkscape:zoom="1.5104"
-     inkscape:cx="52.830414"
-     inkscape:cy="-10.891349"
-     inkscape:window-x="0"
-     inkscape:window-y="24"
+     inkscape:zoom="34.532699"
+     inkscape:cx="25.8347"
+     inkscape:cy="21.414134"
+     inkscape:window-x="130"
+     inkscape:window-y="48"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <defs
@@ -173,21 +173,11 @@
        xlink:href="#linearGradient8385"
        inkscape:collect="always" />
   </defs>
-  <g
-     id="g3120"
-     transform="matrix(0.85000001,0,0,0.85000001,4,-2.7999991)">
-    <path
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="zccz"
-       id="path2107"
-       d="M 39.186288,27.999989 C 39.320816,51.410986 0.81336001,46.822825 0.81336001,46.822825 l 0,-37.645664 c 0,0 38.23841599,-4.5881373 38.37292799,18.822828 z"
-       style="fill:#ffffff;fill-opacity:1;stroke:#008000;stroke-width:1.62672007;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    <path
-       d="m 30.316798,39.760696 -15.276803,0 c -3.496545,0 -6.3946732,-1.161601 -8.6944018,-3.484801 -2.2762645,-2.323201 -3.4144007,-5.256529 -3.4144007,-8.800002 0,-3.519985 1.1264002,-6.359449 3.3792007,-8.518402 2.2762646,-2.158912 5.1861288,-3.238377 8.7296018,-3.238401 l 13.587203,0 0,4.188801 -13.587203,0 c -2.299744,1.6e-5 -4.200545,0.739216 -5.702401,2.217601 -1.4784085,1.478416 -2.2176006,3.379208 -2.2176006,5.702401 0,2.299744 0.7391921,4.165337 2.2176006,5.596801 1.501856,1.431472 3.402657,2.147201 5.702401,2.147201 l 11.088003,0 0,-5.244801 -11.404803,0 0,-3.836801 15.593603,0 0,13.270403"
-       style="font-size:44px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:justify;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:#800000;stroke-width:0.80000019;font-family:Good Times;-inkscape-font-specification:Good Times"
-       id="path3004"
-       inkscape:connector-curvature="0" />
-  </g>
+  <path
+     inkscape:connector-curvature="0"
+     d="M 43.885243,8.3964863 C 42.346072,9.079261 40.69164,9.54051 38.955627,9.7480204 40.72741,8.6857875 42.088567,7.003743 42.729505,4.999347 41.07089,5.9831372 39.234051,6.6972899 37.278813,7.0821869 35.713284,5.4139493 33.482553,4.3717968 31.013771,4.3717968 c -4.740097,0 -8.583379,3.8429088 -8.583379,8.5830052 0,0.672734 0.07573,1.327896 0.222152,1.956074 C 15.519056,14.552753 9.1943544,11.135743 4.9611101,5.9427647 4.2221907,7.2104166 3.798929,8.6849507 3.798929,10.258009 c 0,2.977935 1.5152409,5.605069 3.8184755,7.144241 C 6.2103951,17.35749 4.88685,16.971541 3.7297311,16.32872 c -8.367e-4,0.03765 -8.367e-4,0.07154 -8.367e-4,0.107939 0,4.158607 2.9587318,7.627538 6.8851886,8.416327 -0.7201356,0.196213 -1.4784256,0.301224 -2.2612318,0.301224 -0.5531225,0 -1.0908074,-0.05397 -1.6149792,-0.15396 1.0922719,3.409857 4.262112,5.891651 8.018083,5.960598 -2.93752,2.302314 -6.6384349,3.674515 -10.6599438,3.674515 -0.6928154,0 -1.376092,-0.04184 -2.0475288,-0.120071 3.7984775,2.435271 8.3102286,3.856505 13.1573836,3.856505 15.787739,0 24.421365,-13.07894 24.421365,-24.421533 0,-0.371928 -0.0084,-0.742183 -0.0251,-1.110346 1.677232,-1.210335 3.132312,-2.721895 4.28303,-4.4432644"
+     style="fill:#00aced"
+     id="path4" />
   <g
      id="g2990"
      transform="matrix(0.1375,0,0,0.1375,23.352755,23.226687)">
