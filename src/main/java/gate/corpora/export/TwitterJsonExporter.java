@@ -118,7 +118,7 @@ public class TwitterJsonExporter extends CorpusExporter {
   public String getDocumentAnnotationType() { return null; }
 
   public TwitterJsonExporter() {
-    super("GATE JSON", "json","application/json");
+    super("Twitter JSON", "json","text/x-json-twitter");
   }
 
   @Override
