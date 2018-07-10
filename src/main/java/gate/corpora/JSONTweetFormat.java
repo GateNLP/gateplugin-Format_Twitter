@@ -37,7 +37,7 @@ import gate.util.Out;
  *  
  *  This format produces one GATE document from one JSON file.
  */
-@CreoleResource(name = "GATE JSON Tweet Document Format", isPrivate = true,
+@CreoleResource(name = "Twitter JSON Document Format", isPrivate = true,
     autoinstances = {@AutoInstance(hidden = true)},
     comment = "Format parser for Twitter JSON files",
     helpURL = "http://gate.ac.uk/userguide/sec:social:twitter:format")

@@ -105,7 +105,6 @@ public class Tweet {
   }
   
   private void unpackTweets(FeatureMap features, String path, String type) {
-    System.out.println(path);
     String expandedPath = path == null ? "" : path+".";
     if (features.containsKey("retweeted_status")) {
       unpackTweets((FeatureMap)features.get("retweeted_status"), expandedPath+"retweeted_status", "retweet");
@@ -115,7 +114,7 @@ public class Tweet {
     if (features.containsKey("full_text")) {
       unpackTextAndEntities(features, expandedPath, "full_text", type);      
     } else if (features.containsKey("extended_tweet")) {
-      unpackTweets((FeatureMap)features.get("extended_tweet"), expandedPath+"extend_tweet", type);
+      unpackTweets((FeatureMap)features.get("extended_tweet"), expandedPath+"extended_tweet", type);
     } else if (features.containsKey("text")) {
       unpackTextAndEntities(features, expandedPath, "text", type);
     }
@@ -130,7 +129,7 @@ public class Tweet {
       string.append("\n\n");
     }
     
-    String content = features.get(key).toString();
+    String content = features.remove(key).toString();
     boolean hasEntities = features.containsKey(TweetUtils.ENTITIES_ATTRIBUTE);
     
     RepositioningInfo repos = new RepositioningInfo();      
@@ -149,7 +148,7 @@ public class Tweet {
     
     if (!hasEntities) return;
     
-    FeatureMap entities = (FeatureMap)features.get(TweetUtils.ENTITIES_ATTRIBUTE);
+    FeatureMap entities = (FeatureMap)features.remove(TweetUtils.ENTITIES_ATTRIBUTE);
     
     for (Map.Entry<Object,Object> entity : entities.entrySet()) {
       String entityType = entity.getKey().toString();
@@ -161,8 +160,6 @@ public class Tweet {
         
         long annStart = start + repos.getExtractedPos(position.get(0).longValue());
         long annEnd = start + repos.getExtractedPos(position.get(1).longValue());
-        
-        System.out.println(start+"/"+position+"/"+annStart+"/"+annEnd);       
         
         annotations.add(new PreAnnotation(annStart, annEnd, entityType, instance));
       }
