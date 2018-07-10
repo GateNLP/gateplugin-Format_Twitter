@@ -128,9 +128,11 @@ public class Tweet {
     for (Map.Entry<Object,Object> entity : entities.entrySet()) {
       String entityType = entity.getKey().toString();
       
+      @SuppressWarnings("unchecked")
       List<FeatureMap> instances = (List<FeatureMap>)entity.getValue();
       
       for (FeatureMap instance : instances) {
+        @SuppressWarnings("unchecked")
         List<Number> position = (List<Number>)instance.remove("indices");
         
         long annStart = start + repos.getExtractedPos(position.get(0).longValue());
@@ -206,55 +208,6 @@ public class Tweet {
     }
     mat.appendTail(buf);
     return buf.toString();
-  }
-
-  /**
-   * Process the "entities" property of this json object into annotations,
-   * shifting their offsets by the specified amount.
-   * 
-   * @param json the Tweet json object
-   * @param startOffset offset correction if the text is not the first of
-   *         the content keys.
-   */
-  private void processEntities(JsonNode json, long startOffset, RepositioningInfo repos) {
-    JsonNode entitiesNode = json.get(TweetUtils.ENTITIES_ATTRIBUTE);
-    if(entitiesNode == null || !entitiesNode.isObject()) {
-      // no entities, nothing to do
-      return;
-    }
-    Iterator<String> entityTypes = entitiesNode.fieldNames();
-    while(entityTypes.hasNext()) {
-      String entityType = entityTypes.next();
-      JsonNode entitiesOfType = entitiesNode.get(entityType);
-      if(entitiesOfType != null && entitiesOfType.isArray() && entitiesOfType.size() > 0) {
-        // if the entityType is X:Y then assume X is the AS name and Y is the actual type
-        String[] setAndType = entityType.split(":", 2);
-        Iterator<JsonNode> it = entitiesOfType.elements();
-        while(it.hasNext()) {
-          JsonNode entity = it.next();
-          if(entity.isObject()) {
-            // process is guaranteed to return a FeatureMap given an object
-            FeatureMap features = (FeatureMap)TweetUtils.process(entity);
-            Object indices = features.get("indices");
-            if(indices != null && indices instanceof List<?>) {
-              List<?> indicesList = (List<?>)indices;
-              if(indicesList.get(0) instanceof Number && indicesList.get(1) instanceof Number) {
-                // finally we know we have a valid entity
-                features.remove("indices");
-                long annStart = repos.getExtractedPos(startOffset + ((Number)indicesList.get(0)).longValue());
-                long annEnd = repos.getExtractedPos(startOffset + ((Number)indicesList.get(1)).longValue());
-                if(setAndType.length == 2) {
-                  // explicit annotation set name
-                  annotations.add(new PreAnnotation(annStart, annEnd, setAndType[0], setAndType[1], features));
-                } else {
-                  annotations.add(new PreAnnotation(annStart, annEnd, entityType, features));
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   }
   
 }
