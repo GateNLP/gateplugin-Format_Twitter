@@ -30,7 +30,6 @@ import gate.util.Strings;
 
 public class Tweet {
   private StringBuilder string;
-  private long start;
   private Set<PreAnnotation> annotations;
   
   
@@ -45,35 +44,12 @@ public class Tweet {
   public String getString() {
     return this.string.toString();
   }
-  
-  public long getStart() {
-    return this.start;
-  }
-  
-  public long getEnd() {
-    return this.start + this.string.length();
-  }
-  
-  
-  public static Tweet readTweet(JsonNode json, List<String> contentKeys, List<String> featureKeys) {
-    return readTweet(json, contentKeys, featureKeys, true);
-  }
-  
-  public static Tweet readTweet(JsonNode json, List<String> contentKeys, List<String> featureKeys, boolean handleEntities) {
-    if ( (contentKeys == null) || (featureKeys == null) ) {
-      return new Tweet(json, handleEntities);
-    }
-
-    // implied else
-    return new Tweet(json, contentKeys, featureKeys, handleEntities);
-  }
-
 
   /**
    * Used by the JSONTWeetFormat; the DocumentContent contains only the main text;
    * the annotation feature map contains all the other JSON data, recursively.
    */
-  private Tweet(JsonNode json, boolean handleEntities) {
+  public Tweet(JsonNode json, boolean handleEntities) {
     string = new StringBuilder();
     Iterator<String> keys = json.fieldNames();
     FeatureMap features = Factory.newFeatureMap();
@@ -143,7 +119,6 @@ public class Tweet {
     segmentFeatures.put("tweetType", type);
     if (hasEntities) segmentFeatures.put("entitiesPath", expandedPath+TweetUtils.ENTITIES_ATTRIBUTE);
     
-    
     annotations.add(new PreAnnotation(start, string.length(), "TweetSegment", segmentFeatures));
     
     if (!hasEntities) return;
@@ -166,57 +141,7 @@ public class Tweet {
       
     }
   }
-  
-
-  /** Used by the fancier corpus population system to handle options.
-   * @param contentKeys JSON paths whose values should be converted to String and
-   * added to the DocumentContent
-   * @param featureKeys JSON paths whose values should be stored in the main
-   * annotation's features
-   */
-  private Tweet(JsonNode json, List<String> contentKeys, List<String> featureKeys, boolean handleEntities) {
-    StringBuilder content = new StringBuilder();
-    List<String> keepers = new ArrayList<String>();
-    keepers.addAll(contentKeys);
-    keepers.addAll(featureKeys);
-    this.annotations = new HashSet<PreAnnotation>();
-
-    FeatureMap featuresFound = TweetUtils.process(json, keepers);
-
-    // Put the DocumentContent together from the contentKeys' values found in the JSON.
-    for (String cKey : contentKeys) {
-      if (featuresFound.containsKey(cKey)) {
-        int start = content.length();
-        // Use GATE's String conversion in case there are maps or lists.
-        String str = Strings.toString(featuresFound.get(cKey));
-        RepositioningInfo repos = null;
-        if(TweetUtils.DEFAULT_TEXT_ATTRIBUTE.equals(cKey)) {
-          repos = new RepositioningInfo();
-          str = unescape(str, repos);
-        }
-        content.append(str);
-        this.annotations.add(new PreAnnotation(start, content.length(), cKey));
-        if(handleEntities && TweetUtils.DEFAULT_TEXT_ATTRIBUTE.equals(cKey)) {
-          // only process entities within "text"
-          processEntities(json, start, repos);
-        }
-        content.append('\n');
-      }
-    }
     
-    // Get the featureKeys & their values for the main annotation.
-    FeatureMap annoFeatures = Factory.newFeatureMap();
-    for (String fKey : featureKeys) {
-      if (featuresFound.containsKey(fKey)) {
-        annoFeatures.put(fKey, featuresFound.get(fKey));
-      }
-    }
-    
-    // Create the main annotation and the content.
-    this.annotations.add(new PreAnnotation(0, content.length(), TweetUtils.TWEET_ANNOTATION_TYPE, annoFeatures));
-    this.string = content;
-  }
-  
   /**
    * Characters to account for in unescaping - HTML-encoded ampersand and angle
    * brackets, and supplementary characters (which don't need "unescaping" but do

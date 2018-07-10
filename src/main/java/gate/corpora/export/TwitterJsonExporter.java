@@ -97,7 +97,7 @@ public class TwitterJsonExporter extends CorpusExporter {
   }
 
   public Boolean getExportAsArray() {
-    return null;
+    return Boolean.FALSE;
   }
 
   public TwitterJsonExporter() {

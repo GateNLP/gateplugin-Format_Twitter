@@ -89,7 +89,7 @@ public class JSONTweetFormat extends TextualDocumentFormat {
     String jsonString = StringUtils.trimToEmpty(doc.getContent().toString());
     try {
       // Parse the String
-      Iterator<Tweet> tweetSource = new TweetStreamIterator(jsonString, null, null);
+      Iterator<Tweet> tweetSource = new TweetStreamIterator(jsonString);
       Map<Tweet, Long> tweetStarts = new LinkedHashMap<Tweet, Long>();
       
       // Put them all together to make the unpacked document content

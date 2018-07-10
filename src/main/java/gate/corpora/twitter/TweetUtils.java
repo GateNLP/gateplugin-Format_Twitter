@@ -11,21 +11,19 @@
  */
 package gate.corpora.twitter;
 
-import gate.Factory;
-import gate.FeatureMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
+import gate.Factory;
+import gate.FeatureMap;
 
 /* REFERENCES
  * Jackson API
@@ -41,28 +39,11 @@ public class TweetUtils  {
   public static final String DEFAULT_ENCODING = "UTF-8";
   public static final String TWEET_ANNOTATION_TYPE = "Tweet";
   public static final String TWEET_SEGMENT_ANNOTATION_TYPE = "TweetSegement";
-
-  public static final String DEFAULT_TEXT_ATTRIBUTE = "text";
-
-  public static final String[] DEFAULT_CONTENT_KEYS = {DEFAULT_TEXT_ATTRIBUTE, 
-    "created_at", "user:name"};
-  public static final String[] DEFAULT_FEATURE_KEYS = {"user:screen_name", 
-    "user:location", "id_str", "source", "truncated", "retweeted_status:id"};
   
   /**
    * The JSON property representing entities (e.g. hashtags).
    */
   public static final String ENTITIES_ATTRIBUTE = "entities";
-  
-  /**
-   * Date parser that understands the "created_at" timestamp format.
-   * The parser can cope with dates in any timezone but the returned
-   * DateTime objects will always be anchored in UTC.
-   */
-  // Month names in Twitter API responses are English, so force locale
-  public static final DateTimeFormatter CREATED_AT_FORMAT = DateTimeFormat.forPattern(
-          "EEE MMM dd HH:mm:ss Z yyyy").withZoneUTC().withLocale(Locale.ENGLISH);
-
   
   public static List<Tweet> readTweets(String string) throws IOException {
     if (string.startsWith("[")) {
@@ -97,7 +78,7 @@ public class TweetUtils  {
     for (String line : lines) {
       if (line.length() > 0) {
         JsonNode jnode = mapper.readTree(line);
-        tweets.add(Tweet.readTweet(jnode, contentKeys, featureKeys));
+        tweets.add(new Tweet(jnode, true));
       }
     }
     
@@ -112,7 +93,7 @@ public class TweetUtils  {
     for (String line : lines) {
       if (line.length() > 0) {
         JsonNode jnode = mapper.readTree(line);
-        tweets.add(Tweet.readTweet(jnode, contentKeys, featureKeys));
+        tweets.add(new Tweet(jnode, true));
       }
     }
     
@@ -125,7 +106,7 @@ public class TweetUtils  {
     List<Tweet> tweets = new ArrayList<Tweet>();
     ArrayNode jarray = (ArrayNode) mapper.readTree(string);
     for (JsonNode jnode : jarray) {
-      tweets.add(Tweet.readTweet(jnode, contentKeys, featureKeys));
+      tweets.add(new Tweet(jnode, true));
     }
     return tweets;
   }
