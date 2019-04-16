@@ -356,10 +356,8 @@ public class TwitterJsonExporter extends CorpusExporter {
 
     }
     int tailLen = str.length() - extractedOffset;
-    if(tailLen > 0) {
-      // repositioning record covering everything after the last match
-      repos.addPositionInfo(origOffset, tailLen + 1, extractedOffset, tailLen + 1);
-    }
+    // repositioning record covering everything after the last match
+    repos.addPositionInfo(origOffset, tailLen + 1, extractedOffset, tailLen + 1);
     mat.appendTail(buf);
     return buf.toString();
   }
