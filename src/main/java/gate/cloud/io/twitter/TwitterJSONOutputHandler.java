@@ -57,6 +57,8 @@ public class TwitterJSONOutputHandler extends AbstractFileOutputHandler implemen
 
 		super.configImpl(configData);
 
+		// configure the underlying JSON output handler correctly with the assumption
+		// that the document annotation is Tweet in the Original markups annotaiton set
 		Map<String, String> jsonConfig = new HashMap<String, String>(configData);
 		jsonConfig.put("groupEntitiesBy", "entities");
 		jsonConfig.put("documentAnnotationASName", GateConstants.ORIGINAL_MARKUPS_ANNOT_SET_NAME);
@@ -76,31 +78,42 @@ public class TwitterJSONOutputHandler extends AbstractFileOutputHandler implemen
 			jsonProxyHandler.outputDocument(document, documentId);
 		} else {
 			// we have an actual tweet object we can do something with
+
 			OutputStream outputStream = getFileOutputStream(documentId);
+
+			// create the JSON generator we want to use
 			JsonGenerator generator = MAPPER.getFactory()
 					.createGenerator(new OutputStreamWriter(outputStream, "UTF-8"));
 			generator.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
 			generator.enable(JsonGenerator.Feature.AUTO_CLOSE_JSON_CONTENT);
 			generator.setRootValueSeparator(new SerializedString("\n"));
 
-			FeatureMap options = Factory.newFeatureMap();
-
+			// Convert all the annoation set descriptions into a simple set of Strings where
+			// set and type are separated by :
 			Set<String> annotationTypes = new HashSet<String>();
-
 			for (AnnotationSetDefinition definition : getAnnSetDefinitions()) {
 				for (String type : definition.getAnnotationTypes()) {
 					annotationTypes.add(definition.getAnnotationSetName() + ":" + type);
 				}
 			}
 
+			// create a FeatureMap of options to drive the underlying Twitter exporter
+			FeatureMap options = Factory.newFeatureMap();
 			options.put("annotationTypes", annotationTypes);
 
+			// export the document
 			exporter.export(document, generator, options);
 		}
 	}
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		// this is called when methods on the underlying JSON output handler are called.
+		// In most cases we just proxy the call through, but if the call is to
+		// getFileOutpuStream then instead we return the call to the same mehtod on this
+		// class, ensuring that everything goes into the same file. Very important in
+		// the case where we extend this handler to support streaming output
+		
 		if (method.getName().equals("getFileOutputStream"))
 			return getFileOutputStream((DocumentID) args[0]);
 
