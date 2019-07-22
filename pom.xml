@@ -51,6 +51,12 @@
 	<dependencies>
 		<!-- add any other libraries your plugin depends on. Any other GATE plugins 
 			you depend on at compile time should use the provided scope -->
+		<dependency>
+			<groupId>uk.ac.gate</groupId>
+			<artifactId>gcp-api</artifactId>
+			<version>3.0</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 </project>
