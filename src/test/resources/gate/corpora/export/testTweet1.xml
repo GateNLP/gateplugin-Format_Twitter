@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<GateDocument version="3">
+<!-- The document's features-->
+
+<GateDocumentFeatures>
+<Feature>
+  <Name className="java.lang.String">gate.SourceURL</Name>
+  <Value className="java.lang.String">created from String</Value>
+</Feature>
+<Feature>
+  <Name className="java.lang.String">MimeType</Name>
+  <Value className="java.lang.String">text/x-json-twitter</Value>
+</Feature>
+<Feature>
+  <Name className="java.lang.String">docNewLineType</Name>
+  <Value className="java.lang.String"></Value>
+</Feature>
+</GateDocumentFeatures>
+<!-- The document content area with serialized nodes -->
+
+<TextWithNodes><Node id="0"/>This is an <Node id="11"/>example<Node id="18"/> tweet<Node id="24"/>
+
+<Node id="26"/>This is a <Node id="36"/>quoted<Node id="42"/> <Node id="43"/>EXAMPLE<Node id="50"/>
+
+</TextWithNodes>
+<!-- The default annotation set -->
+
+<AnnotationSet>
+<Annotation Id="5" Type="examples" StartNode="36" EndNode="42">
+<Feature>
+  <Name className="java.lang.String">case</Name>
+  <Value className="java.lang.String">lower</Value>
+</Feature>
+</Annotation>
+</AnnotationSet>
+
+<!-- Named annotation set -->
+
+<AnnotationSet Name="Original markups">
+<Annotation Id="0" Type="examples" StartNode="43" EndNode="50">
+<Feature>
+  <Name className="java.lang.String">case</Name>
+  <Value className="java.lang.String">upper</Value>
+</Feature>
+</Annotation>
+<Annotation Id="1" Type="TweetSegment" StartNode="0" EndNode="24">
+<Feature>
+  <Name className="java.lang.String">tweetType</Name>
+  <Value className="java.lang.String">tweet</Value>
+</Feature>
+<Feature>
+  <Name className="java.lang.String">entitiesPath</Name>
+  <Value className="java.lang.String">extended_tweet.entities</Value>
+</Feature>
+<Feature>
+  <Name className="java.lang.String">textPath</Name>
+  <Value className="java.lang.String">extended_tweet.full_text</Value>
+</Feature>
+</Annotation>
+<Annotation Id="2" Type="examples" StartNode="11" EndNode="18">
+<Feature>
+  <Name className="java.lang.String">case</Name>
+  <Value className="java.lang.String">lower</Value>
+</Feature>
+</Annotation>
+<Annotation Id="3" Type="Tweet" StartNode="0" EndNode="50">
+<Feature>
+  <Name className="java.lang.String">extended_tweet</Name>
+  <Value className="gate.corpora.ObjectWrapper"><![CDATA[<?xml version='1.1'?><gate.corpora.ObjectWrapper><value class="gate.util.SimpleFeatureMapImpl" serialization="custom"><gate.util.SimpleMapImpl><default><capacity>3</capacity><count>1</count><theKeys><string>entities</string><null/><null/></theKeys><theValues><gate.util.SimpleFeatureMapImpl serialization="custom"><gate.util.SimpleMapImpl><default><capacity>3</capacity><count>1</count><theKeys><string>examples</string><null/><null/></theKeys><theValues><list><gate.util.SimpleFeatureMapImpl serialization="custom"><gate.util.SimpleMapImpl><default><capacity>3</capacity><count>2</count><theKeys><string>indices</string><string>case</string><null/></theKeys><theValues><list><int>11</int><int>18</int></list><string>lower</string><null/></theValues></default></gate.util.SimpleMapImpl></gate.util.SimpleFeatureMapImpl></list><null/><null/></theValues></default></gate.util.SimpleMapImpl></gate.util.SimpleFeatureMapImpl><null/><null/></theValues></default></gate.util.SimpleMapImpl></value></gate.corpora.ObjectWrapper>]]></Value>
+</Feature>
+<Feature>
+  <Name className="java.lang.String">quoted_status</Name>
+  <Value className="gate.corpora.ObjectWrapper"><![CDATA[<?xml version='1.1'?><gate.corpora.ObjectWrapper><value class="gate.util.SimpleFeatureMapImpl" serialization="custom"><gate.util.SimpleMapImpl><default><capacity>3</capacity><count>1</count><theKeys><string>entities</string><null/><null/></theKeys><theValues><gate.util.SimpleFeatureMapImpl serialization="custom"><gate.util.SimpleMapImpl><default><capacity>3</capacity><count>1</count><theKeys><string>examples</string><null/><null/></theKeys><theValues><list><gate.util.SimpleFeatureMapImpl serialization="custom"><gate.util.SimpleMapImpl><default><capacity>3</capacity><count>2</count><theKeys><string>indices</string><string>case</string><null/></theKeys><theValues><list><long>17</long><long>24</long></list><string>upper</string><null/></theValues></default></gate.util.SimpleMapImpl></gate.util.SimpleFeatureMapImpl></list><null/><null/></theValues></default></gate.util.SimpleMapImpl></gate.util.SimpleFeatureMapImpl><null/><null/></theValues></default></gate.util.SimpleMapImpl></value></gate.corpora.ObjectWrapper>]]></Value>
+</Feature>
+</Annotation>
+<Annotation Id="4" Type="TweetSegment" StartNode="26" EndNode="50">
+<Feature>
+  <Name className="java.lang.String">tweetType</Name>
+  <Value className="java.lang.String">quotedTweet</Value>
+</Feature>
+<Feature>
+  <Name className="java.lang.String">entitiesPath</Name>
+  <Value className="java.lang.String">quoted_status.entities</Value>
+</Feature>
+<Feature>
+  <Name className="java.lang.String">textPath</Name>
+  <Value className="java.lang.String">quoted_status.full_text</Value>
+</Feature>
+</Annotation>
+</AnnotationSet>
+
+</GateDocument>

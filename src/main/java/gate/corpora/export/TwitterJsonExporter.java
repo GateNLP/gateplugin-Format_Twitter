@@ -3,13 +3,7 @@ package gate.corpora.export;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -162,21 +156,28 @@ public class TwitterJsonExporter extends CorpusExporter {
       AnnotationSet defaultEntitiesAS =
           doc.getAnnotations((String)options.get("entitiesAnnotationSetName"));
 
+      // first see if we have a whole annotationsMap provided in options?
       @SuppressWarnings("unchecked")
-      Collection<String> types =
-          (Collection<String>)options.get("annotationTypes");
-
       Map<String, AnnotationSet> annotationsMap =
-          new LinkedHashMap<>();
+              (Map<String, AnnotationSet>)options.get("annotationsMap");
 
-      if(types != null) {
-        for(String type : types) {
-          String[] setAndType = type.split(":", 2);
-          if(setAndType.length == 1) {
-            annotationsMap.put(type, defaultEntitiesAS.get(type));
-          } else {
-            annotationsMap.put(type,
-                doc.getAnnotations(setAndType[0]).get(setAndType[1]));
+      if(annotationsMap == null) {
+        // construct annotationsMap from annotationTypes parameter
+        annotationsMap = new LinkedHashMap<>();
+
+        @SuppressWarnings("unchecked")
+        Collection<String> types =
+                (Collection<String>) options.get("annotationTypes");
+
+        if(types != null) {
+          for(String type : types) {
+            String[] setAndType = type.split(":", 2);
+            if(setAndType.length == 1) {
+              annotationsMap.put(type, defaultEntitiesAS.get(type));
+            } else {
+              annotationsMap.put(type,
+                      doc.getAnnotations(setAndType[0]).get(setAndType[1]));
+            }
           }
         }
       }
@@ -202,11 +203,15 @@ public class TwitterJsonExporter extends CorpusExporter {
           String text = escape(Utils.stringFor(doc, segment), repos);
           addToFeatures(features, textPath, text);
           
-          // TODO update the features with the entities
           String entitiesPath =
               (String)segment.getFeatures().get("entitiesPath");
-          
-          FeatureMap annotations = Factory.newFeatureMap();
+
+          // fetch any existing entities at this path, into which we will merge
+          // the extra annotations
+          Object existingEntities = getFromFeatures(features, entitiesPath);
+
+          FeatureMap annotations = (existingEntities instanceof FeatureMap)
+                  ? (FeatureMap)existingEntities : Factory.newFeatureMap();
           
           //filter the annotations map using the segment as the covering annotation
           for (Map.Entry<String, AnnotationSet> entry : annotationsMap.entrySet()) {
@@ -214,8 +219,8 @@ public class TwitterJsonExporter extends CorpusExporter {
             
             List<FeatureMap> annotationsofType = new ArrayList<FeatureMap>();
             
-            List<Annotation> segmentAnnotations = Utils.inDocumentOrder(
-                Utils.getContainedAnnotations(entry.getValue(), segment));
+            Collection<Annotation> segmentAnnotations =
+                    Utils.getContainedAnnotations(entry.getValue(), segment);
             
             for (Annotation annotation : segmentAnnotations) {
               FeatureMap representation = Factory.newFeatureMap();
@@ -230,7 +235,24 @@ public class TwitterJsonExporter extends CorpusExporter {
               
               annotationsofType.add(representation);
             }
-            
+
+            // merge any existing entities of this type with these new ones
+            if(annotations.containsKey(annotationType)) {
+              @SuppressWarnings("unchecked")
+              Collection<FeatureMap> existingAnnotsOfType =
+                      (Collection<FeatureMap>)annotations.get(annotationType);
+              annotationsofType.addAll(existingAnnotsOfType);
+            }
+            // and sort the whole lot in document order
+            annotationsofType.sort((fm1, fm2) -> {
+              @SuppressWarnings("unchecked")
+              List<? extends Number> indices1 = (List<? extends Number>)fm1.get("indices");
+              @SuppressWarnings("unchecked")
+              List<? extends Number> indices2 = (List<? extends Number>)fm2.get("indices");
+              int cmp1 = Long.compare(indices1.get(0).longValue(), indices2.get(0).longValue());
+              return (cmp1 != 0) ? cmp1 : Long.compare(indices2.get(1).longValue(), indices1.get(1).longValue());
+            });
+
             annotations.put(annotationType,annotationsofType);
           }
           
@@ -293,6 +315,23 @@ public class TwitterJsonExporter extends CorpusExporter {
         FeatureMap nested = (FeatureMap)features.get(parts[0]);
         addToFeatures(nested, parts[1], value);
       }
+  }
+
+  private static Object getFromFeatures(FeatureMap features, String path) {
+    String[] parts = path.split("\\.",2);
+
+    if (parts.length == 1) {
+      return features.get(path);
+    }
+    else {
+      if (!features.containsKey(parts[0])) {
+        return null;
+      }
+
+      FeatureMap nested = (FeatureMap)features.get(parts[0]);
+      return getFromFeatures(nested, parts[1]);
+    }
+
   }
   
   /**
