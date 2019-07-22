@@ -3,7 +3,13 @@ package gate.corpora.export;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +40,7 @@ import gate.Factory;
 import gate.FeatureMap;
 import gate.GateConstants;
 import gate.Utils;
+import gate.annotation.AnnotationSetImpl;
 import gate.corpora.RepositioningInfo;
 import gate.creole.metadata.AutoInstance;
 import gate.creole.metadata.CreoleParameter;
@@ -152,33 +159,35 @@ public class TwitterJsonExporter extends CorpusExporter {
 
   public void export(Document doc, JsonGenerator generator, FeatureMap options)
       throws IOException {
-    try {
+	  
       AnnotationSet defaultEntitiesAS =
           doc.getAnnotations((String)options.get("entitiesAnnotationSetName"));
 
-      // first see if we have a whole annotationsMap provided in options?
       @SuppressWarnings("unchecked")
-      Map<String, AnnotationSet> annotationsMap =
-              (Map<String, AnnotationSet>)options.get("annotationsMap");
+      Collection<String> types =
+          (Collection<String>)options.get("annotationTypes");
 
-      if(annotationsMap == null) {
-        // construct annotationsMap from annotationTypes parameter
-        annotationsMap = new LinkedHashMap<>();
+      @SuppressWarnings("unchecked")
+      Map<String, AnnotationSet> annotationsMap = (Map<String, AnnotationSet>) options
+          .getOrDefault("annotationsMap", new LinkedHashMap<String, AnnotationSet>());
 
-        @SuppressWarnings("unchecked")
-        Collection<String> types =
-                (Collection<String>) options.get("annotationTypes");
+      if(annotationsMap.isEmpty()) {
+        for(String type : types) {
+          String[] setAndType = type.split(":", 2);
+          String justType = setAndType.length == 1 ? type : setAndType[1];
+          AnnotationSet set = setAndType.length == 1 ? defaultEntitiesAS :
+              doc.getAnnotations(setAndType[0]);
 
-        if(types != null) {
-          for(String type : types) {
-            String[] setAndType = type.split(":", 2);
-            if(setAndType.length == 1) {
-              annotationsMap.put(type, defaultEntitiesAS.get(type));
-            } else {
-              annotationsMap.put(type,
-                      doc.getAnnotations(setAndType[0]).get(setAndType[1]));
-            }
+          AnnotationSet annots = set.get(justType);
+
+          AnnotationSet previous = annotationsMap.getOrDefault(justType,
+              new AnnotationSetImpl(doc));
+
+          if (previous.isEmpty()) {
+            annotationsMap.put(justType,previous);
           }
+
+          previous.addAll(annots);
         }
       }
 
@@ -272,33 +281,6 @@ public class TwitterJsonExporter extends CorpusExporter {
       }
 
       generator.flush();
-
-      /*
-       * if(docAnnots == null || docAnnots.isEmpty()) { // no document
-       * annotations, write everything Map<String, Collection<Annotation>>
-       * sortedAnnots = new LinkedHashMap<>(); for(Map.Entry<String,
-       * Collection<Annotation>> entry : annotationsMap.entrySet()) {
-       * sortedAnnots.put(entry.getKey(),
-       * Utils.inDocumentOrder((AnnotationSet)entry.getValue())); }
-       * DocumentJsonUtils.writeDocument(doc, 0L, Utils.end(doc), sortedAnnots,
-       * null, null, generator); } else { for(Annotation docAnnot :
-       * Utils.inDocumentOrder(docAnnots)) { Map<String, Collection<Annotation>>
-       * coveredAnnotations = new HashMap<>(); for(Map.Entry<String,
-       * Collection<Annotation>> entry : annotationsMap.entrySet()) {
-       * coveredAnnotations.put(entry.getKey(),
-       * Utils.inDocumentOrder(((AnnotationSet)entry.getValue()).getContained(
-       * Utils.start(docAnnot), Utils.end(docAnnot)))); }
-       * DocumentJsonUtils.writeDocument(doc, Utils.start(docAnnot),
-       * Utils.end(docAnnot), coveredAnnotations, docAnnot.getFeatures(), null,
-       * generator); } }
-       */
-
-    } finally {
-    } /*
-       * catch(InvalidOffsetException e) { // should never happen, as all
-       * offsets come from the document itself throw new
-       * GateRuntimeException("Invalid offset found within document", e); }
-       */
   }
   
   private static void addToFeatures(FeatureMap features, String path, Object value) {
