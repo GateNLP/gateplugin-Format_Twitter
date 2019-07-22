@@ -39,7 +39,14 @@ public class TwitterJSONOutputHandler extends AbstractFileOutputHandler implemen
 
 	public TwitterJSONOutputHandler() {
 		try {
+			// because we don't publush the GCP Impl classes as a maven artifact we can't
+			// reference the JSONOutputHandler directly and can't extended it as an
+			// anonymous inner class to override the getFileOutputStream so...
+
+			// access the class by reflection
 			jsonOutputHandler = (OutputHandler) (Class.forName("gate.cloud.io.file.JSONOutputHandler").newInstance());
+			
+			// create a proxy we will use to allow us to change the instances behaviour
 			jsonProxyHandler = (OutputHandler) Proxy.newProxyInstance(this.getClass().getClassLoader(),
 					new Class<?>[] { OutputHandler.class }, this);
 
@@ -113,7 +120,7 @@ public class TwitterJSONOutputHandler extends AbstractFileOutputHandler implemen
 		// getFileOutpuStream then instead we return the call to the same mehtod on this
 		// class, ensuring that everything goes into the same file. Very important in
 		// the case where we extend this handler to support streaming output
-		
+
 		if (method.getName().equals("getFileOutputStream"))
 			return getFileOutputStream((DocumentID) args[0]);
 
