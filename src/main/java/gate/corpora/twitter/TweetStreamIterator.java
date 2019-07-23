@@ -12,14 +12,12 @@
 package gate.corpora.twitter;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
-import java.util.List;
-import java.util.zip.GZIPInputStream;
+
 import org.apache.log4j.Logger;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingIterator;

@@ -1,16 +1,16 @@
 package gate.corpora.export;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import gate.Document;
 import gate.DocumentExporter;
 import gate.Factory;
 import gate.Utils;
 import gate.test.GATEPluginTestCase;
-
-import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 
 public class TwitterJsonExporterTest extends GATEPluginTestCase {
 

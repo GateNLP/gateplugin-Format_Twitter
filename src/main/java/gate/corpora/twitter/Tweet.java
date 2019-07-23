@@ -11,7 +11,6 @@
  */
 package gate.corpora.twitter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +24,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import gate.Factory;
 import gate.FeatureMap;
 import gate.corpora.RepositioningInfo;
-import gate.util.Strings;
 
 
 public class Tweet {
