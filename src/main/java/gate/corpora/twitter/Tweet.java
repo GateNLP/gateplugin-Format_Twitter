@@ -166,16 +166,17 @@ public class Tweet {
     StringBuffer buf = new StringBuffer();
     int origOffset = 0;
     int extractedOffset = 0;
+    int lastMatchEnd = 0;
     Matcher mat = UNESCAPE_PATTERN.matcher(str);
     while(mat.find()) {
-      if(mat.start() != origOffset) {
+      if(mat.start() != lastMatchEnd) {
         // repositioning record for the span from end of previous match to start of this one
-        int nonMatchLen = mat.start() - origOffset;
+        int nonMatchLen = mat.start() - lastMatchEnd;
         repos.addPositionInfo(origOffset, nonMatchLen, extractedOffset, nonMatchLen);
         origOffset += nonMatchLen;
         extractedOffset += nonMatchLen;
-      }      
-      
+      }
+
       // in most cases the original length is the number of code units the pattern matched
       int origLen = mat.end() - mat.start();
       // and the extracted result is one code unit
@@ -198,8 +199,9 @@ public class Tweet {
 
       origOffset += origLen;
       extractedOffset += extractedLen;
+      lastMatchEnd = mat.end();
     }
-    int tailLen = str.length() - origOffset;
+    int tailLen = str.length() - lastMatchEnd;
     if(tailLen > 0) {
       // repositioning record covering everything after the last match
       repos.addPositionInfo(origOffset, tailLen + 1, extractedOffset, tailLen + 1);
