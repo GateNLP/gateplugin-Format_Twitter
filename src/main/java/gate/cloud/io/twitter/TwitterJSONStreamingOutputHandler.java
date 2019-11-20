@@ -26,7 +26,7 @@ public class TwitterJSONStreamingOutputHandler extends TwitterJSONOutputHandler 
 	private StreamingFileOutputHelper<byte[], OutputStream> helper;
 
 	public TwitterJSONStreamingOutputHandler() {
-		helper = new StreamingFileOutputHelper<byte[], OutputStream>(new byte[0],
+		helper = new StreamingFileOutputHelper<>(new byte[0],
 				// we use the output stream as-is
 				x -> x, (OutputStream os, byte[] bytes) -> {
 					os.write(bytes);
@@ -41,11 +41,7 @@ public class TwitterJSONStreamingOutputHandler extends TwitterJSONOutputHandler 
 		helper.config(configData);
 	}
 
-	protected ThreadLocal<ByteArrayOutputStream> baos = new ThreadLocal<ByteArrayOutputStream>() {
-		protected ByteArrayOutputStream initialValue() {
-			return new ByteArrayOutputStream();
-		}
-	};
+	protected ThreadLocal<ByteArrayOutputStream> baos = ThreadLocal.withInitial(() -> new ByteArrayOutputStream());
 
 	@Override
 	protected void outputDocumentImpl(Document document, DocumentID documentId) throws IOException, GateException {
