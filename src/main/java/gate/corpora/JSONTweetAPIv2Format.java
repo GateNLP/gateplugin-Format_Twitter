@@ -103,11 +103,11 @@ public class JSONTweetAPIv2Format extends JSONTweetFormat {
             ObjectNode user = (ObjectNode) userNodes.get(i);
 
             // move the username and id into screen_name and id_str to match v1.1
-            user.put("screen_name", user.remove("username"));
-            user.put("id_str", user.remove("id"));
+            user.set("screen_name", user.remove("username"));
+            user.set("id_str", user.remove("id"));
 
             // move the user profile into the right place
-            user.put("profile_image_url_https", user.remove("profile_image_url"));
+            user.set("profile_image_url_https", user.remove("profile_image_url"));
 
             // convert the new style date format into the v1.1 format
             ZonedDateTime date = ZonedDateTime.parse(user.remove("created_at").asText(), NEW_DATE_FORMAT);
@@ -116,10 +116,10 @@ public class JSONTweetAPIv2Format extends JSONTweetFormat {
             // the network info for a user is in public_metrics pull this out and put it
             // at the top level under the original v1.1 fields
             ObjectNode metrics = (ObjectNode) user.remove("public_metrics");
-            user.put("followers_count", metrics.at("/followers_count"));
-            user.put("friends_count", metrics.at("/following_count"));
-            user.put("listed_count", metrics.at("/listed_count"));
-            user.put("statuses_count", metrics.at("/tweet_count"));
+            user.set("followers_count", metrics.at("/followers_count"));
+            user.set("friends_count", metrics.at("/following_count"));
+            user.set("listed_count", metrics.at("/listed_count"));
+            user.set("statuses_count", metrics.at("/tweet_count"));
 
             // now store the v1.1 user object in the map ready for when we need it
             userObjectsByID.put(user.at("/id_str").asText(), user);
@@ -222,7 +222,7 @@ public class JSONTweetAPIv2Format extends JSONTweetFormat {
    public void convertTweet(ObjectNode tweet, Map<String, ObjectNode> userObjectsByID,
          Map<String, ObjectNode> userObjectsByName) {
       // move the id into the correctly named field for v1.1
-      tweet.put("id_str", tweet.remove("id"));
+      tweet.set("id_str", tweet.remove("id"));
 
       // remove the ID of the user being replied to as it's always in the wrong place
       JsonNode node = tweet.remove("in_reply_to_user_id");
@@ -231,7 +231,7 @@ public class JSONTweetAPIv2Format extends JSONTweetFormat {
          // if this is a reply to a user then...
 
          // stick the ID in the right field
-         tweet.put("in_reply_to_user_id_str", node);
+         tweet.set("in_reply_to_user_id_str", node);
 
          // get the user object we built before from the map
          ObjectNode user = userObjectsByID.get(node.asText());
@@ -241,7 +241,7 @@ public class JSONTweetAPIv2Format extends JSONTweetFormat {
          if (user == null)
             System.err.println("missing user " + node.asText());
          else {
-            tweet.put("in_reply_to_screen_name", user.get("screen_name"));
+            tweet.set("in_reply_to_screen_name", user.get("screen_name"));
          }
       }
 
@@ -252,7 +252,7 @@ public class JSONTweetAPIv2Format extends JSONTweetFormat {
       if (author == null)
          System.err.println("missing author " + tweet.at("/author_id").asText());
       else {
-         tweet.put("user", author);
+         tweet.set("user", author);
       }
 
       // convert the new date format back to the old v1.1 version
@@ -261,10 +261,10 @@ public class JSONTweetAPIv2Format extends JSONTweetFormat {
 
       // move the public metrics onto the top level object
       ObjectNode metrics = (ObjectNode) tweet.remove("public_metrics");
-      tweet.put("retweet_count", metrics.at("/retweet_count"));
-      tweet.put("reply_count", metrics.at("/reply_count"));
-      tweet.put("favorite_count", metrics.at("/like_count"));
-      tweet.put("quote_count", metrics.at("/quote_count"));
+      tweet.set("retweet_count", metrics.at("/retweet_count"));
+      tweet.set("reply_count", metrics.at("/reply_count"));
+      tweet.set("favorite_count", metrics.at("/like_count"));
+      tweet.set("quote_count", metrics.at("/quote_count"));
 
       // TODO add the boolean fields we can derive from the public_metrics
 
@@ -279,12 +279,12 @@ public class JSONTweetAPIv2Format extends JSONTweetFormat {
          // mentions should be user_mentions
          node = entities.remove("mentions");
          if (node != null)
-            entities.put("user_mentions", node);
+            entities.set("user_mentions", node);
 
          // cashtags should be symbols
          node = entities.remove("cashtags");
          if (node != null)
-            entities.put("symbols", node);
+            entities.set("symbols", node);
 
          // for (String type : entities.fieldNames()) {
          Iterator<String> it = entities.fieldNames();
@@ -306,16 +306,16 @@ public class JSONTweetAPIv2Format extends JSONTweetFormat {
                indices.add(instance.remove("end"));
 
                // then store the array back into the instance
-               instance.put("indices", indices);
+               instance.set("indices", indices);
 
                if ("hashtags".equals(type) || "symbols".equals(type)) {
                   // hahstags and symbols should have a text feature but it's now tag so...
-                  instance.put("text", instance.remove("tag"));
+                  instance.set("text", instance.remove("tag"));
                } else if ("user_mentions".equals(type)) {
                   // user mentions need the username moving to screen_name and...
-                  instance.put("screen_name", instance.remove("username"));
+                  instance.set("screen_name", instance.remove("username"));
 
-                  ObjectNode userNode = userObjectsByName.get(instance.get("screen_name"));
+                  ObjectNode userNode = userObjectsByName.get(instance.get("screen_name").asText());
                   if (userNode != null) {
                      // ... the other user fields adding if we know them
                      instance.setAll(userNode);
@@ -364,14 +364,14 @@ public class JSONTweetAPIv2Format extends JSONTweetFormat {
             } else if ("retweeted".equals(type)) {
                // it's a retweet so if we have the tweet object then put it in the right place
                if (rTweet != null)
-                  tweet.put("retweeted_status", rTweet);
+                  tweet.set("retweeted_status", rTweet);
             } else if ("quoted".equals(type)) {
                // we are quoting a tweet so stick the id in one field and...
                tweet.put("quoted_status_id_str", id);
 
                // if we have the full tweet put that in the other field
                if (rTweet != null)
-                  tweet.put("quoted_status", rTweet);
+                  tweet.set("quoted_status", rTweet);
 
                // TODO boolean is_quote_status field, should be false except for these
             } else {
