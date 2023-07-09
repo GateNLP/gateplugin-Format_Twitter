@@ -70,6 +70,8 @@ public class JSONTweetZeeschuimerFormat extends JSONTweetFormat {
          
          tweet = convert(tweet);
          
+         tweet.put("platform", "Twitter");
+
          concatenation.append(objectMapper.writeValueAsString(tweet));
          
       } catch (Exception e) {
